@@ -24,15 +24,16 @@ class PDMHandler(object):
     @return      pdm文件的DOM结构
     """
     return xml.dom.minidom.parse(pdmfilename)
+
   @staticmethod
   def __get_nodes_by_path(parent,xml_path):
     """
     @brief 按路径取节点核心函数,通过传入一个节点和一个路径
            (类文件系统路径)的字符串,获得相应的子结点(或集合).
-           例1: __get_nodes_by_path(node,"a/b/c|3/d") 
+           例1: __get_nodes_by_path(node,"a/b/c|3/d")
              即获得node下a下b下第3个c节点下的所有d节点的一个
              list.
-           例2: __get_nodes_by_path(node,"a/b/c|3/d|2") 
+           例2: __get_nodes_by_path(node,"a/b/c|3/d|2")
              即获得node下a下b下第3个c节点下的第2个d节点.
              注意:此处返回的不是list,而是节点
     @param[in]   parent DOM中的父节点
@@ -42,19 +43,25 @@ class PDMHandler(object):
     for tag in xml_path.split("/")[0:-1] :
       tag_desc = tag.split("|")
       tag_name,tag_index = tag_desc[0], ( int(tag_desc[1]) if len(tag_desc) == 2 else 0 )
-      child_nodes  = curr_node.getElementsByTagName(tag_name)
+      child_nodes = []
+      for child_node in curr_node.childNodes :
+        if child_node.nodeName == tag_name :
+          child_nodes.append(child_node)
       if len(child_nodes) < tag_index + 1 :
-        return None
+        return []
       curr_node = child_nodes[tag_index]
     # -- 最后一级路径特殊处理 -- #
     tag = xml_path.split("/")[-1]
     tag_desc = tag.split("|")
     tag_name,tag_index = tag_desc[0], ( int(tag_desc[1]) if len(tag_desc) == 2 else None )
-    child_nodes  = curr_node.getElementsByTagName(tag_name)
+    child_nodes = []
+    for child_node in curr_node.childNodes :
+      if child_node.nodeName == tag_name :
+        child_nodes.append(child_node)
     if tag_index == None :
       return child_nodes
     elif len(child_nodes) < tag_index + 1 :
-      return None
+      return []
     else :
       curr_node = child_nodes[tag_index]
       return curr_node
@@ -73,11 +80,27 @@ class PDMHandler(object):
     """
     ret_dict = {}
     for attr in attr_list :
-      try:
-        ret_dict[attr] = parent.getElementsByTagName("a:"+attr)[0].childNodes[0].data
-      except IndexError:
-        ret_dict[attr] = ""
+      ret_dict[attr] = ""
+      for child in parent.childNodes :
+        if child.nodeName == "a:" + attr :
+          ret_dict[attr] = child.childNodes[0].data
+          break
     return ret_dict
+
+  @staticmethod
+  def __get_pkgnodes_recursively(o_pkg):
+    #-- 需要传入一个o:Model/o:Package节点 --#
+    if o_pkg.nodeName != "o:Model" and o_pkg.nodeName != "o:Package" :
+      return []
+    ret_list = []
+    subpkgs = PDMHandler.__get_nodes_by_path(o_pkg,"c:Packages/o:Package")
+    if subpkgs != None :
+      for subpkg in subpkgs :
+        ret_list.append(subpkg)
+        ret_list = ret_list + PDMHandler.__get_pkgnodes_recursively(subpkg)
+    else :
+      return []
+    return ret_list
 
   @staticmethod
   def getPkgNodes(hpdm):
@@ -86,13 +109,15 @@ class PDMHandler(object):
     @param[in]   hpdm    待处理的pdm文件DOM句柄(可通过PDMHandler.parse取得)
     @return      返回pacakge的节点list:[pkg1,pkg2...],元素为DOM节点类型
     """
+    ret_list = []
     try:
-      o_mdl = PDMHandler.__get_nodes_by_path(hpdm,"Model/o:RootObject/o:Model")[0]
+      o_mdl  = PDMHandler.__get_nodes_by_path(hpdm,"Model/o:RootObject/c:Children/o:Model")[0]
+      ret_list.append(o_mdl)
     except IndexError:
       print "ERROR:不是一个合法的pdm文件!"
-      return None
-    #-- TODO: 递归查找Package待实现 --#
-    return  PDMHandler.__get_nodes_by_path(o_mdl,"c:Packages/o:Package")
+      return []
+    ret_list = ret_list + PDMHandler.__get_pkgnodes_recursively(o_mdl)
+    return ret_list
 
   @staticmethod
   def getTblNodesInPkg(pkgnode):
@@ -180,7 +205,7 @@ class PDMHandler(object):
       if currnode.tagName == "o:Table" or currnode == None :
         break
     if currnode == None :
-      return None
+      return []
     else :
       for col in PDMHandler.getColNodesInTbl(currnode) :
         if col.getAttribute("Id") == refcolid :
