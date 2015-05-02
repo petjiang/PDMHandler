@@ -3,9 +3,9 @@
 
 from PDMHandler import PDMHandler
 if __name__ == '__main__' :
-#  import sys
-#  reload(sys)
-#  sys.setdefaultencoding("utf-8")
+  import sys
+  reload(sys)
+  sys.setdefaultencoding("utf-8")
   ph = PDMHandler.parse("icspdm.pdm")
   for pkg in PDMHandler.getPkgNodes(ph):
     pkg_attrs = PDMHandler.getPkgAttrs(pkg)
