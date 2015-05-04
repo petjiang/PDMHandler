@@ -10,9 +10,9 @@ use following command to see help docs (sorry that I type it in Chinese):
 $ echo "import PDMHandler; help(PDMHandler);"|python
 ```
 ### TEST PDM files
-> PowerDesigner model file (.pdm) is prepared in [repodir]/src/testpdm
+ PowerDesigner model file (.pdm) is prepared in [repodir]/src/testpdm
  use these as input argument for testing the example1.py
- NOTICE: (.pdm) files come from PowerDesigner15 directory [Sybase\PowerDesigner 15\Examples]
+* NOTICE: (.pdm) files come from PowerDesigner15 directory [Sybase\PowerDesigner 15\Examples]
  
 ### example1.py
 A usecase of PDMHandler class, read it as a reference code.
