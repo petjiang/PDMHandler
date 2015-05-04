@@ -15,10 +15,9 @@ $ echo "import PDMHandler; help(PDMHandler);"|python
 * NOTICE: (.pdm) files come from PowerDesigner15 directory [Sybase\PowerDesigner 15\Examples]
  
 ### example1.py
-A usecase of PDMHandler class, read it as a reference code.
-example1.py shows 4 levels of pdm file -- Package/Table/Column/Index
-each level has their own attributes which are defined in PDMHandler class :
-
+* It is a usecase of PDMHandler class, read it as a reference code.
+* example1.py shows 5 levels of pdm file -- Package/Table/Column/Index/IndexColumn
+* each level has their own attributes which are defined in PDMHandler class :
 ``` python
 PKG_ATTR_LIST=["Name","Code","CreationDate","Creator","ModificationDate","Modifier"]
 TBL_ATTR_LIST=["Name","Code","CreationDate","Creator","ModificationDate","Modifier", "PhysicalOptions"]
