@@ -5,33 +5,36 @@ Currently, it is able to handle PhysicalDiagram in .pdm.
 ### PDMHandler.py
 The class implementation  of PDMHandler.
 use following command to see help docs (sorry that I type it in Chinese):
-`
+
+``` shell
 $ echo "import PDMHandler; help(PDMHandler);"|python
-`
+```
 ### TEST PDM files
 > PowerDesigner model file (.pdm) is prepared in [repodir]/src/testpdm
-> use these as input argument for testing the example1.py
-> NOTICE: (.pdm) files come from PowerDesigner15 directory [Sybase\PowerDesigner 15\Examples]
+ use these as input argument for testing the example1.py
+ NOTICE: (.pdm) files come from PowerDesigner15 directory [Sybase\PowerDesigner 15\Examples]
+ 
 ### example1.py
 A usecase of PDMHandler class, read it as a reference code.
 example1.py shows 4 levels of pdm file -- Package/Table/Column/Index
 each level has their own attributes which are defined in PDMHandler class :
-`
+
+``` python
 PKG_ATTR_LIST=["Name","Code","CreationDate","Creator","ModificationDate","Modifier"]
 TBL_ATTR_LIST=["Name","Code","CreationDate","Creator","ModificationDate","Modifier", "PhysicalOptions"]
 COL_ATTR_LIST=["Name","Code","CreationDate","Creator","ModificationDate","Modifier", "DataType","Length","Column.Mandatory","Comment"]
-  IDX_ATTR_LIST=["Name","Code","CreationDate","Creator","ModificationDate","Modifier", "PhysicalOptions","Unique"]
+IDX_ATTR_LIST=["Name","Code","CreationDate","Creator","ModificationDate","Modifier", "PhysicalOptions","Unique"]
 IDXCOL_ATTR_LIST=["CreationDate","Creator","ModificationDate","Modifier"]
-
-`
+```
 
 By running :
-`
+``` shell
 $ python example1.py testpdm/Consol.pdm
-`
+```
 
 shows the output to standout :
-> P: Duplicated Database DUPLICATED_DATABASE lpommier
+``` shell
+ P: Duplicated Database DUPLICATED_DATABASE lpommier
   T: Duplicated Account DUPLICATED_ACCOUNT vaudino
    T-PATH: /Model/o:RootObject/c:Children/o:Model/c:Tables/o:Table
    C: Email EMAIL char(256) 256 1
@@ -63,6 +66,7 @@ shows the output to standout :
     IC: EMAIL
    I: REFERENCES_FK REFERENCES_FK
     IC: PUB_TITLE
+```
 
 ## Why I write it ?
 Yes,it is just a tiny code for fun.
