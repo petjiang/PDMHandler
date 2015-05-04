@@ -6,7 +6,13 @@ if __name__ == '__main__' :
   import sys
   reload(sys)
   sys.setdefaultencoding("utf-8")
-  ph = PDMHandler.parse("icspdm.pdm")
+  if len(sys.argv) <= 1:
+    print "USAGE:   ",sys.argv[0],"<filename>"
+    print "EXAMPLE: ",sys.argv[0],"data/Consol.pdm"
+    sys.exit(1)
+  else:
+    filename = sys.argv[1]
+  ph = PDMHandler.parse(filename)
   for pkg in PDMHandler.getPkgNodes(ph):
     pkg_attrs = PDMHandler.getPkgAttrs(pkg)
     print "P:", pkg_attrs["Name"],pkg_attrs["Code"],pkg_attrs["Creator"]
